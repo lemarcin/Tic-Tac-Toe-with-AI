@@ -1,0 +1,6 @@
+## [Project: Tic-Tac-Toe with AI](https://hyperskill.org/projects/81)
+#### [Work on project. Stage 1/5: Initial setup](https://hyperskill.org/projects/81/stages/447/implement)
+#### [Work on project. Stage 2/5: Easy does it](https://hyperskill.org/projects/81/stages/448/implement)
+#### [Work on project. Stage 3/5: Watch 'em fight](https://hyperskill.org/projects/81/stages/449/implement)
+#### [Work on project. Stage 4/5: Signs of intelligence](https://hyperskill.org/projects/81/stages/450/implement)
+#### [Work on project. Stage 5/5: An undefeated champion](https://hyperskill.org/projects/81/stages/451/implement)
