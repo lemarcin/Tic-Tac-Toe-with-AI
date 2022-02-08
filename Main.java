@@ -1,6 +1,6 @@
 package tictactoe;
 
-
+import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -8,34 +8,53 @@ public class Main {
     public static void main(String[] args) {
         char[][] grid = enterCells().clone();
         print(grid);
-        enterCoordinates(grid, nextMove(grid));
-        print(grid);
-        System.out.println(stateOfGame(grid));
-    }
-
-    public static char nextMove(char[][] grid) {
-        final int n = 3;
-        int x = 0;
-        int o = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                x += grid[i][j] == 'X' ? 1 : 0;
-                o += grid[i][j] == 'O' ? 1 : 0;
+        String[] player = { "easy", "user"};
+        char[] nextMove = {'O', 'X'};
+        boolean gameIsOn = true;
+        int i = 1;
+        do {
+            switch (player[i]) {
+                case "user" :
+                    enterCoordinates(grid, nextMove[i]);
+                    break;
+                case "easy" :
+                    System.out.println("Making move level \"easy\"");
+                    easyAI(grid, nextMove[i]);
+                    break;
             }
-        }
-        return x > o ? 'O' : 'X';
+            print(grid);
+            String stateOfGame = stateOfGame(grid);
+            switch (stateOfGame) {
+                case "X wins" :
+                case "O wins" :
+                case "Draw" :
+                    System.out.println(stateOfGame);
+                    gameIsOn = false;
+                    break;
+                default:
+                    i = i == 1 ? 0 : 1;
+                    break;
+            }
+        } while (gameIsOn);
     }
 
+    public static void easyAI(char[][] grid, char nextMove) {
+        int i = 0;
+        int j = 0;
+        do {
+            Random random = new Random();
+            i = random.nextInt(3);
+            j = random.nextInt(3);
+        } while(grid[i][j] != '_');
+        grid[i][j] = nextMove;
+    }
 
     public static char[][] enterCells() {
-        System.out.print("Enter cells: ");
-        String str = new Scanner(System.in).nextLine();
         final int n = 3;
         char[][] grid = new char[n][n];
         for (int i = 0, k = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                grid[i][j] = str.charAt(k);
-                k++;
+            for (int j = 0; j < n; j++, k++) {
+                grid[i][j] = '_';
             }
         }
         return grid;
@@ -56,6 +75,7 @@ public class Main {
 
     public static void enterCoordinates(char[][] grid, char nextMove) {
         do {
+
             System.out.print("Enter the coordinates: ");
             String str = new Scanner(System.in).nextLine();
             int x = 0;
