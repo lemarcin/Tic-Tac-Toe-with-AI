@@ -1,15 +1,33 @@
 package tictactoe;
-
 import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        char[][] grid = enterCells().clone();
-        print(grid);
-        String[] player = { "easy", "user"};
+        Scanner scanner = new Scanner(System.in);
+        String[] player = new String[2];
+        do {
+            char[][] grid = enterCells().clone();
+            System.out.print("Input command: ");
+            String input = scanner.nextLine();
+            if (input.matches("(start\\s(user|easy|medium)\\s(user|easy|medium))|exit")) {
+                if (input.matches("exit")){
+                    break;
+                } else {
+                    player[1] = input.split("\\s")[1];
+                    player[0] = input.split("\\s")[2];
+                    execute(grid,player);
+                }
+            } else {
+                System.out.println("Bad parameters!");
+            }
+        }while (true);
+    }
+
+    public static void execute(char[][] grid, String[] player) {
         char[] nextMove = {'O', 'X'};
+        print(grid);
         boolean gameIsOn = true;
         int i = 1;
         do {
@@ -21,12 +39,16 @@ public class Main {
                     System.out.println("Making move level \"easy\"");
                     easyAI(grid, nextMove[i]);
                     break;
+                case "medium" :
+                    System.out.println("Making move level \"medium\"");
+                    mediumAI(grid, nextMove[i]);
+                    break;
             }
             print(grid);
             String stateOfGame = stateOfGame(grid);
             switch (stateOfGame) {
                 case "X wins" :
-                case "O wins" :
+                case "O wins\n" :
                 case "Draw" :
                     System.out.println(stateOfGame);
                     gameIsOn = false;
@@ -47,6 +69,82 @@ public class Main {
             j = random.nextInt(3);
         } while(grid[i][j] != '_');
         grid[i][j] = nextMove;
+    }
+
+    public static void mediumAI(char[][] grid, char nextMove) {
+        int i = 0;
+        int j = 0;
+        char lastMove = nextMove == 'X' ? 'O' : 'X';
+        if (twoInRow(grid, nextMove)) {
+            thirdInRow(grid, nextMove, nextMove);
+        } else if (twoInRow(grid, lastMove)) {
+            thirdInRow(grid, lastMove, nextMove);
+        } else {
+            do {
+                Random random = new Random();
+                i = random.nextInt(3);
+                j = random.nextInt(3);
+            } while (grid[i][j] != '_');
+        }
+        grid[i][j] = nextMove;
+    }
+
+    public static boolean twoInRow(char[][] grid, char nextMove) {
+        boolean twoX = false;
+        boolean twoO = false;
+        for (int i = 0; i < grid.length; i++) {
+            int row = 0;
+            int col = 0;
+            int lDiag = 0;
+            int rDiag = 0;
+            for (int j = 0; j < grid[i].length; j++) {
+                row += grid[i][j];
+                col += grid[j][i];
+                lDiag += grid[j][j];
+                rDiag += grid[j][2 - j];
+            }
+            twoX = twoX || row == 176 || col == 176 || lDiag == 176 || rDiag == 176;
+            twoO = twoO || row == 158 || col == 158 || lDiag == 158 || rDiag == 158;
+        }
+        return nextMove == 'X' ? twoX : twoO;
+    }
+
+    public static void thirdInRow(char[][] grid, char lastMove, char nextMove) {
+        int sum = lastMove * 2;
+        for (int i = 0; i < grid.length; i++) {
+            int row = 0;
+            int col = 0;
+            int lDiag = 0;
+            int rDiag = 0;
+            int[] xy = new int[8];
+            for (int j = 0; j < grid[i].length; j++) {
+                row += grid[i][j];
+                xy[0] = grid[i][j] == '_' ? i : 10;
+                xy[1] = grid[i][j] == '_' ? j : 10;
+                col += grid[j][i];
+                xy[2] = grid[j][i] == '_' ? j : 10;
+                xy[3] = grid[j][i] == '_' ? i : 10;
+                lDiag += grid[j][j];
+                xy[4] = grid[j][j] == '_' ? j : 10;
+                xy[5] = grid[j][j] == '_' ? j : 10;
+                rDiag += grid[j][2 - j];
+                xy[6] = grid[j][2 - j] == '_' ? j : 10;
+                xy[7] = grid[j][2 - j] == '_' ? 2 - j : 10;
+            }
+            if (row == sum) {
+                grid[0][1] = nextMove;
+                break;
+            } else if (col == sum) {
+                grid[2][3] = nextMove;
+                break;
+            } else if (lDiag == sum) {
+                grid[4][5] = nextMove;
+                break;
+            } else if (rDiag == sum) {
+                grid[6][7] = nextMove;
+                break;
+            }
+        }
     }
 
     public static char[][] enterCells() {
