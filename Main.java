@@ -1,4 +1,5 @@
 package tictactoe;
+
 import java.util.Random;
 import java.util.Scanner;
 
@@ -17,7 +18,7 @@ public class Main {
                 } else {
                     player[1] = input.split("\\s")[1];
                     player[0] = input.split("\\s")[2];
-                    execute(grid,player);
+                    execute(grid, player);
                 }
             } else {
                 System.out.println("Bad parameters!");
@@ -48,7 +49,7 @@ public class Main {
             String stateOfGame = stateOfGame(grid);
             switch (stateOfGame) {
                 case "X wins" :
-                case "O wins\n" :
+                case "O wins" :
                 case "Draw" :
                     System.out.println(stateOfGame);
                     gameIsOn = false;
@@ -80,18 +81,13 @@ public class Main {
         } else if (twoInRow(grid, lastMove)) {
             thirdInRow(grid, lastMove, nextMove);
         } else {
-            do {
-                Random random = new Random();
-                i = random.nextInt(3);
-                j = random.nextInt(3);
-            } while (grid[i][j] != '_');
+            easyAI(grid, nextMove);
         }
-        grid[i][j] = nextMove;
     }
 
     public static boolean twoInRow(char[][] grid, char nextMove) {
-        boolean twoX = false;
-        boolean twoO = false;
+        boolean two = false;;
+        int sum = nextMove * 2 + '_';
         for (int i = 0; i < grid.length; i++) {
             int row = 0;
             int col = 0;
@@ -103,45 +99,45 @@ public class Main {
                 lDiag += grid[j][j];
                 rDiag += grid[j][2 - j];
             }
-            twoX = twoX || row == 176 || col == 176 || lDiag == 176 || rDiag == 176;
-            twoO = twoO || row == 158 || col == 158 || lDiag == 158 || rDiag == 158;
+            two = two || row == sum || col == sum || lDiag == sum || rDiag == sum;
         }
-        return nextMove == 'X' ? twoX : twoO;
+        return two;
     }
 
     public static void thirdInRow(char[][] grid, char lastMove, char nextMove) {
-        int sum = lastMove * 2;
+        int sum = lastMove * 2 + '_';
+        int row, col, lDiag, rDiag;
         for (int i = 0; i < grid.length; i++) {
-            int row = 0;
-            int col = 0;
-            int lDiag = 0;
-            int rDiag = 0;
+            row = 0;
+            col = 0;
+            lDiag = 0;
+            rDiag = 0;
             int[] xy = new int[8];
             for (int j = 0; j < grid[i].length; j++) {
                 row += grid[i][j];
-                xy[0] = grid[i][j] == '_' ? i : 10;
-                xy[1] = grid[i][j] == '_' ? j : 10;
+                xy[0] = grid[i][j] == '_' ? i : xy[0];
+                xy[1] = grid[i][j] == '_' ? j : xy[1];
                 col += grid[j][i];
-                xy[2] = grid[j][i] == '_' ? j : 10;
-                xy[3] = grid[j][i] == '_' ? i : 10;
+                xy[2] = grid[j][i] == '_' ? j : xy[2];
+                xy[3] = grid[j][i] == '_' ? i : xy[3];
                 lDiag += grid[j][j];
-                xy[4] = grid[j][j] == '_' ? j : 10;
-                xy[5] = grid[j][j] == '_' ? j : 10;
+                xy[4] = grid[j][j] == '_' ? j : xy[4];
+                xy[5] = grid[j][j] == '_' ? j : xy[5];
                 rDiag += grid[j][2 - j];
-                xy[6] = grid[j][2 - j] == '_' ? j : 10;
-                xy[7] = grid[j][2 - j] == '_' ? 2 - j : 10;
+                xy[6] = grid[j][2 - j] == '_' ? j : xy[6];
+                xy[7] = grid[j][2 - j] == '_' ? 2 - j : xy[7];
             }
             if (row == sum) {
-                grid[0][1] = nextMove;
+                grid[xy[0]][xy[1]] = nextMove;
                 break;
             } else if (col == sum) {
-                grid[2][3] = nextMove;
+                grid[xy[2]][xy[3]] = nextMove;
                 break;
             } else if (lDiag == sum) {
-                grid[4][5] = nextMove;
+                grid[xy[4]][xy[5]] = nextMove;
                 break;
             } else if (rDiag == sum) {
-                grid[6][7] = nextMove;
+                grid[xy[6]][xy[7]] = nextMove;
                 break;
             }
         }
